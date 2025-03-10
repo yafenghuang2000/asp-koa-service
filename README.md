@@ -1,31 +1,60 @@
-# as-koa-service
 
+  "dependencies": {
+    <!-- "@nestjs/cache-manager": "^3.0.0", -->
+    <!-- "@nestjs/common": "^11.0.1", -->
+    <!-- "@nestjs/core": "^11.0.1", -->
+    <!-- "@nestjs/jwt": "^11.0.0", -->
+    <!-- "@nestjs/passport": "^11.0.5", -->
+    <!-- "@nestjs/platform-express": "^11.0.1", -->
+    <!-- "@nestjs/platform-socket.io": "^11.0.9", -->
+    <!-- "@nestjs/swagger": "^11.0.3", -->
+    <!-- "@nestjs/typeorm": "^11.0.0", -->
+    <!-- "@nestjs/websockets": "^11.0.9", -->
+    <!-- "@types/passport-jwt": "^4.0.1", -->
+    <!-- "argon2": "^0.41.1", -->
+    <!-- "cache-manager-redis-store": "^3.0.1", -->
+    <!-- "class-transformer": "^0.5.1", -->
+    <!-- "class-validator": "^0.14.1", -->
+    <!-- "dayjs": "^1.11.13", -->
+    <!-- "dotenv": "^16.4.7", -->
+    <!-- "glob": "^11.0.1", -->
+    <!-- "ioredis": "^5.5.0", -->
+    <!-- "jsonwebtoken": "^9.0.2", -->
+    <!-- "mysql2": "^3.12.0", -->
+    <!-- "nodemon": "^3.1.9", -->
+    <!-- "passport-jwt": "^4.0.1", -->
+    <!-- "reflect-metadata": "^0.2.2", -->
+    <!-- "rxjs": "^7.8.1", -->
+    <!-- "socket.io": "^4.8.1", -->
+    <!-- "typeorm": "^0.3.20", -->
+    <!-- "winston": "^3.17.0", -->
+    <!-- "winston-daily-rotate-file": "^5.0.0" -->
+  },
+  "devDependencies": 
+    <!-- "@eslint/eslintrc": "^3.2.0", -->
+    <!-- "@eslint/js": "^9.18.0", -->
+    <!-- "@nestjs/cli": "^11.0.0", -->
+    <!-- "@nestjs/schematics": "^11.0.0", -->
+    <!-- "@nestjs/testing": "^11.0.1", -->
+    <!-- "@swc/cli": "^0.6.0", -->
+    <!-- "@swc/core": "^1.10.7", -->
+    <!-- "@types/express": "^5.0.0", -->
+    <!-- "@types/jest": "^29.5.14", -->
+    <!-- "@types/node": "^22.10.7", -->
+    <!-- "@types/supertest": "^6.0.2", -->
+    <!-- "eslint": "^9.18.0", -->
+    <!-- "eslint-config-prettier": "^10.0.1", -->
+    <!-- "eslint-plugin-prettier": "^5.2.2", -->
+    <!-- "globals": "^15.14.0", -->
+    <!-- "husky": "^9.1.7", -->
+    <!-- "jest": "^29.7.0", -->
+    <!-- "prettier": "^3.4.2", -->
+    <!-- "source-map-support": "^0.5.21", -->
+    <!-- "supertest": "^7.0.0", -->
+    <!-- "ts-jest": "^29.2.5", -->
+    <!-- "ts-loader": "^9.5.2", -->
+    <!-- "ts-node": "^10.9.2", -->
+    <!-- "tsconfig-paths": "^4.2.0", -->
+    <!-- "typescript": "^5.7.3", -->
+    <!-- "typescript-eslint": "^8.20.0" -->
 
-
-## QuickStart
-
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
-
-```bash
-npm i
-npm run dev
-open http://localhost:7001/
-```
-
-### Deploy
-
-```bash
-npm start
-npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-
-[egg]: https://eggjs.org

@@ -1,5 +1,14 @@
 {
-  "include": [
-    "**/*"
+  "compilerOptions": {
+    "target": "ES6",
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

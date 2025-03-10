@@ -1,39 +1,62 @@
 {
-  "name": "as-koa-service",
-  "version": "1.0.0",
+  "name": "my-nestjs-project",
+  "version": "0.0.1",
   "description": "",
+  "author": "",
   "private": true,
-  "egg": {
-    "declarations": true
+  "license": "UNLICENSED",
+  "scripts": {
+    "format": "prettier --write \"**/*.js\"",
+    "start": "babel-node index.js",
+    "start:dev": "nodemon",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "egg": "^3.17.5",
-    "egg-mysql": "^5.0.0",
-    "egg-scripts": "2"
+    "@eslint/js": "^9.22.0",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.0.6",
+    "@nestjs/typeorm": "^11.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.7",
+    "husky": "^9.1.7",
+    "ioredis": "^5.6.0",
+    "mysql2": "^3.13.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.2.0",
+    "typeorm": "^0.3.21"
   },
   "devDependencies": {
-    "egg-bin": "6",
-    "egg-mock": "5",
-    "eslint": "8",
-    "eslint-config-egg": "13"
+    "@babel/core": "7.26.0",
+    "@babel/node": "7.26.0",
+    "@babel/plugin-proposal-decorators": "7.25.9",
+    "@babel/plugin-transform-runtime": "7.25.9",
+    "@babel/preset-env": "7.26.0",
+    "@babel/register": "7.25.9",
+    "@babel/runtime": "7.26.0",
+    "@nestjs/testing": "^11.0.1",
+    "eslint": "^9.22.0",
+    "glob": "^11.0.1",
+    "globals": "^16.0.0",
+    "jest": "29.7.0",
+    "nodemon": "3.1.9",
+    "prettier": "3.4.2",
+    "supertest": "7.0.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-as-koa-service",
-    "stop": "egg-scripts stop --title=egg-server-as-koa-service",
-    "dev": "egg-bin dev",
-    "test": "npm run lint -- --fix && npm run test:local",
-    "test:local": "egg-bin test",
-    "cov": "egg-bin cov",
-    "lint": "eslint .",
-    "ci": "npm run lint && npm run cov"
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "author": "",
-  "license": "MIT"
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.js$",
+    "coverageDirectory": "../coverage"
+  }
 }
