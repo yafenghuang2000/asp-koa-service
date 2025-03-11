@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import { AppModule } from './module';
+import { ResponseTransformerInterceptor } from './utils/response-transformer';
+import 'reflect-metadata';
 
 // 根据环境变量加载对应的 .env 文件
 // 根据环境变量加载对应的 .env 文件
@@ -11,6 +13,7 @@ const env = process.env.NODE_ENV || 'production';
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
+    app.useGlobalInterceptors(new ResponseTransformerInterceptor());
     const config = new DocumentBuilder()
       .setTitle('API 文档')
       .setDescription('API 描述')

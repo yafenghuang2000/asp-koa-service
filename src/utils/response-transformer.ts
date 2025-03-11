@@ -36,9 +36,12 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
       map((data: T) => {
         response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
         // 处理成功响应
+        console.log(data, 'data', dtoClass);
+
         return {
           code: 0, // 成功状态码统一为 0
           message: 'success', // 默认成功信息
+          // data: data,
           data:
             dtoClass && data
               ? BaseTransformResponse(dtoClass as ClassConstructor<object>, data)
