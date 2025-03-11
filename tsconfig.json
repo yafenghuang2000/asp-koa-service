@@ -6,7 +6,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -14,8 +13,23 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "target": "ES2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
   }
 }
