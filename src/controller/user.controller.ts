@@ -17,8 +17,8 @@ export class UserController {
     try {
       const result = await this.useService.login(body);
       return result;
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
   }
 
