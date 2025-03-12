@@ -12,8 +12,7 @@ export class UserController {
     description: '登录请求体',
     type: LoginDto,
   })
-  @Reflect.metadata('dtoClass', LoginResponseDto) // 确保这行代码存在
-  async login(@Body() body: LoginDto) {
+  async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     try {
       const result = await this.useService.login(body);
       return result;

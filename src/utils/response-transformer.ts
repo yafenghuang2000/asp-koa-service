@@ -30,22 +30,22 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
   intercept<T>(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ctx = context.switchToHttp();
     const response: Response = ctx.getResponse();
-    const dtoClass = this.getDtoClassFromContext(context); // 获取DTO类
+    // const dtoClass = this.getDtoClassFromContext(context); // 获取DTO类
 
     return next.handle().pipe(
       map((data: T) => {
         response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
         // 处理成功响应
-        console.log(data, 'data', dtoClass);
+        // console.log(data, 'data', dtoClass);
 
         return {
           code: 0, // 成功状态码统一为 0
           message: 'success', // 默认成功信息
-          // data: data,
-          data:
-            dtoClass && data
-              ? BaseTransformResponse(dtoClass as ClassConstructor<object>, data)
-              : (data ?? null), // 如果有 DTO 类，则转换数据，否则直接返回数据
+          data: data ?? null,
+          // data:
+          //   dtoClass && data
+          //     ? BaseTransformResponse(dtoClass as ClassConstructor<object>, data)
+          //     : (data ?? null), // 如果有 DTO 类，则转换数据，否则直接返回数据
         } as ResponseTransformer<T>;
       }),
       catchError((error: unknown) => {
@@ -86,8 +86,8 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
     );
   }
 
-  private getDtoClassFromContext(context: ExecutionContext): ClassConstructor<unknown> | undefined {
-    const handler = context.getHandler();
-    return Reflect.getMetadata('dtoClass', handler) as ClassConstructor<unknown> | undefined;
-  }
+  // private getDtoClassFromContext(context: ExecutionContext): ClassConstructor<unknown> | undefined {
+  //   const handler = context.getHandler();
+  //   return Reflect.getMetadata('dtoClass', handler) as ClassConstructor<unknown> | undefined;
+  // }
 }
