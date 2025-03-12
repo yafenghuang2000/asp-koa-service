@@ -1,11 +1,11 @@
 import { Body, Controller, Post, InternalServerErrorException } from '@nestjs/common';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
-import { PasswordService } from '@/utils/PasswordService';
 import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto } from '@/dto/user.dto';
+import { UserService } from '@/service/user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly passwordService: PasswordService) {}
+  constructor(private readonly useService: UserService) {}
   @Post('login')
   @ApiOperation({ summary: '用户登录' })
   @ApiBody({
@@ -14,11 +14,26 @@ export class UserController {
   })
   @Reflect.metadata('dtoClass', LoginResponseDto) // 确保这行代码存在
   async login(@Body() body: LoginDto) {
-    const hashedPassword = await this.passwordService.hashPassword(body.password);
-    const isMatch = await this.passwordService.comparePassword(body.password, hashedPassword);
-    if (!isMatch) {
-      throw new InternalServerErrorException('密码错误');
+    try {
+      const result = await this.useService.login(body);
+      return result;
+    } catch {
+      throw new InternalServerErrorException();
     }
-    return { username: 'admin', token: '1234567890' };
+  }
+
+  @Post('register')
+  @ApiOperation({ summary: '注册用户' })
+  @ApiBody({
+    description: '注册用户请求体',
+    type: RegisterDto,
+  })
+  async register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
+    try {
+      const savedUser = await this.useService.register(registerDto);
+      return savedUser;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

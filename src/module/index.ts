@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmConfigModule, GlobalEntitiesModule, JwtGlobalModule } from './config.module';
 import { UserController } from '@/controller/user.controller';
-import { PasswordService } from '@/utils/PasswordService';
+
+import { UserModule } from './user.module';
 
 @Module({
-  imports: [],
+  imports: [TypeOrmConfigModule, GlobalEntitiesModule, JwtGlobalModule, UserModule],
   controllers: [UserController],
-  providers: [PasswordService],
 })
 export class AppModule {}
