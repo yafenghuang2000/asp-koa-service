@@ -1,0 +1,37 @@
+# 依赖目录
+node_modules
+dist
+
+# 版本控制
+.git
+.gitignore
+
+# 开发工具配置
+.vscode
+.idea
+*.swp
+*.swo
+
+# 环境文件
+.env
+.env.*
+
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 测试覆盖率
+coverage
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Docker 相关
+Dockerfile
+docker-compose.yml
+.dockerignore
