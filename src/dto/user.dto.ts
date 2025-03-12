@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsOptional, ValidateNested, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEmail } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 /**
  * 登录请求体
@@ -60,7 +60,7 @@ export class RegisterDto {
     type: String,
     description: '密码',
     required: true,
-    example: '123456admin',
+    example: '123456',
   })
   password: string;
 
@@ -84,55 +84,6 @@ export class RegisterDto {
     example: '15512341234@qq.com',
   })
   email: string;
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty({
-    type: String,
-    description: '用户ID',
-    required: false,
-    example: '1',
-  })
-  user_id?: string;
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty({
-    type: String,
-    description: '用户类型',
-    required: false,
-    example: 'admin',
-  })
-  user_type?: string;
-
-  @IsOptional()
-  @ApiProperty({
-    type: Number,
-    description: '状态',
-    required: false,
-    example: true,
-  })
-  status?: boolean;
-
-  @IsOptional()
-  @ApiProperty({
-    type: String,
-    description: '角色',
-    required: false,
-    example: 'admin',
-  })
-  role?: string;
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => String)
-  @ApiProperty({
-    type: [String],
-    description: '权限',
-    required: false,
-    example: ['admin'],
-  })
-  permission?: string[];
 }
 
 /**

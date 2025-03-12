@@ -25,8 +25,8 @@ export class UserService {
       throw new BadRequestException('用户不存在');
     }
 
-    const hashedPassword = await this.passwordService.hashPassword(user.password);
-    const isMatch = await this.passwordService.comparePassword(loginDto.password, hashedPassword);
+    // 检查密码是否匹配
+    const isMatch = await this.passwordService.comparePassword(loginDto.password, user.password);
 
     if (!isMatch) {
       throw new BadRequestException('密码错误');

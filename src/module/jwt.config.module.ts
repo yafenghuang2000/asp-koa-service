@@ -6,8 +6,9 @@ import {
   Module,
   SetMetadata,
 } from '@nestjs/common';
-import { AuthGuard, PassportStrategy } from '@nestjs/passport';
+import { AuthGuard, PassportStrategy, PassportModule } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
+// import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -16,6 +17,9 @@ import * as process from 'node:process';
 @Global()
 @Module({
   imports: [
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
@@ -28,7 +32,6 @@ export class JwtGlobalModule {}
 /**
  * 跳过jwt验证
  */
-
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
@@ -56,7 +59,6 @@ export class JwtAuthenticationGuard extends AuthGuard('jwt') {
 
 /**
  * JWT策略类，用于验证JWT的有效性
- * 使用PassportStrategy装饰器标记JwtStrategy类，使其成为一个Passport策略
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -75,16 +77,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 /**
  * JWT守卫类，用于保护需要认证的路由
  */
-
 interface JwtPayload {
-  // 根据实际 JWT 负载定义字段
   userId: number;
   username: string;
 }
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  // 构造函数，注入JwtService和Reflector服务
+  // 实现CanActivate接口，用于定义守卫逻辑
   constructor(
     private jwtService: JwtService, // JwtService用于处理JWT相关的操作
     private reflector: Reflector, // Reflector用于反射操作，这里未使用

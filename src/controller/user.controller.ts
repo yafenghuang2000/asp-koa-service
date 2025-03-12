@@ -1,5 +1,6 @@
 import { Body, Controller, Post, InternalServerErrorException } from '@nestjs/common';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
+// import { Public } from '@/module/jwt.config.module';
 import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto } from '@/dto/user.dto';
 import { UserService } from '@/service/user.service';
 
@@ -22,6 +23,7 @@ export class UserController {
   }
 
   @Post('register')
+  // @Public()
   @ApiOperation({ summary: '注册用户' })
   @ApiBody({
     description: '注册用户请求体',
