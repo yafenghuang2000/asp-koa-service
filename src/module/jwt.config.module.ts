@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard, PassportStrategy, PassportModule } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
-// import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -33,7 +32,7 @@ export class JwtGlobalModule {}
  * 跳过jwt验证
  */
 export const IS_PUBLIC_KEY = 'isPublic';
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+export const setPublic = (): MethodDecorator & ClassDecorator => SetMetadata(IS_PUBLIC_KEY, true);
 
 /**
  * jwt验证
@@ -44,7 +43,7 @@ export class JwtAuthenticationGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+  public canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -69,7 +68,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET ?? '',
     });
   }
-  validate(payload: unknown) {
+  public validate(payload: unknown): unknown {
     return payload;
   }
 }
@@ -77,7 +76,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 /**
  * JWT守卫类，用于保护需要认证的路由
  */
-interface JwtPayload {
+interface IJwtPayload {
   userId: number;
   username: string;
 }
@@ -90,7 +89,7 @@ export class JwtAuthGuard implements CanActivate {
     private reflector: Reflector, // Reflector用于反射操作，这里未使用
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  public canActivate(context: ExecutionContext): boolean {
     // 从上下文中获取HTTP请求对象
     const request: Request = context.switchToHttp().getRequest();
     try {
@@ -99,7 +98,7 @@ export class JwtAuthGuard implements CanActivate {
       if (!token) return false;
       // 验证JWT令牌，获取令牌的负载信息
       // 将负载信息存储在请求对象中，以便后续中间件或路由处理器使用
-      request['user'] = this.jwtService.verify<JwtPayload>(token);
+      request.user = this.jwtService.verify<IJwtPayload>(token);
       return true;
     } catch (err) {
       console.log('Can not activate jwt guard', err);

@@ -16,7 +16,7 @@ export class UserService {
     private readonly jwtService: JwtService, // 明确类型
   ) {}
 
-  login = async (loginDto: LoginDto): Promise<LoginResponseDto> => {
+  public login = async (loginDto: LoginDto): Promise<LoginResponseDto> => {
     const user = await this.userRepository.findOne({
       where: { username: loginDto.username },
     });
@@ -39,7 +39,7 @@ export class UserService {
         timestamp: new Date().getTime(),
         nonce: Math.random().toString(36).substring(10),
       },
-      { expiresIn: '24h', secret: process.env.JWT_SECRET as string },
+      { expiresIn: '24h', secret: process.env.JWT_SECRET! },
     );
 
     const redisKey = `token:${user.username}`;
@@ -54,7 +54,7 @@ export class UserService {
     };
   };
 
-  async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
+  public async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
     // 检查用户是否已存在
     const existingUser = await this.userRepository.findOne({
       where: { username: registerDto.username },

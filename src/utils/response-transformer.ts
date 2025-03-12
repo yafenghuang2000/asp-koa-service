@@ -11,13 +11,13 @@ import { catchError, map } from 'rxjs/operators';
 import { plainToClass, ClassConstructor } from 'class-transformer';
 import { Response } from 'express';
 
-interface ResponseTransformer<T> {
+interface IResponseTransformer<T> {
   code: number;
   message: string;
   data: T;
 }
 
-export function BaseTransformResponse<T extends object, V>(cls: ClassConstructor<T>, data: V): T {
+export function baseTransformResponse<T extends object, V>(cls: ClassConstructor<T>, data: V): T {
   return plainToClass<T, V>(cls, data, {
     excludeExtraneousValues: true,
     exposeUnsetFields: false,
@@ -26,27 +26,28 @@ export function BaseTransformResponse<T extends object, V>(cls: ClassConstructor
 
 @Injectable()
 // 实现NestInterceptor接口的intercept方法，用于拦截请求和响应
-export class ResponseTransformerInterceptor implements NestInterceptor {
-  intercept<T>(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+export class ResponseTransformerInterceptor implements NestInterceptor<unknown, IResponseTransformer<unknown>> {
+  public intercept(context: ExecutionContext, next: CallHandler): Observable<IResponseTransformer<unknown>> {
     const ctx = context.switchToHttp();
     const response: Response = ctx.getResponse();
     // const dtoClass = this.getDtoClassFromContext(context); // 获取DTO类
+    response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
 
     return next.handle().pipe(
-      map((data: T) => {
-        response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
+      map((data: unknown) => {
         // 处理成功响应
         // console.log(data, 'data', dtoClass);
 
-        return {
+        const response: IResponseTransformer<unknown> = {
           code: 0, // 成功状态码统一为 0
           message: 'success', // 默认成功信息
           data: data ?? null,
           // data:
           //   dtoClass && data
-          //     ? BaseTransformResponse(dtoClass as ClassConstructor<object>, data)
+          //     ? baseTransformResponse(dtoClass as ClassConstructor<object>, data)
           //     : (data ?? null), // 如果有 DTO 类，则转换数据，否则直接返回数据
-        } as ResponseTransformer<T>;
+        };
+        return response;
       }),
       catchError((error: unknown) => {
         let message: string;
@@ -59,7 +60,7 @@ export class ResponseTransformerInterceptor implements NestInterceptor {
               code?: number;
               message?: string;
             };
-            message = errorMessage || error.message || '服务错误';
+            message = errorMessage ?? error.message ?? '服务错误';
             code = errorCode ?? 9000;
           } else {
             message = error.message || '服务错误';

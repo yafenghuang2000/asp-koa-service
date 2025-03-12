@@ -5,26 +5,26 @@ class RedisCache {
 
   constructor() {
     this.client = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      host: process.env.REDIS_HOST ?? 'localhost',
+      port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
       password: process.env.REDIS_PASSWORD,
     });
 
     this.client.on('connect', () => {
-      const host = this.client.options.host;
-      const port = this.client.options.port;
+      const host = this.client.options.host ?? 'unknown';
+      const port = this.client.options.port ?? 0;
       console.log(`Redis 连接成功:${host}:${port}`);
     });
 
     this.client.on('error', (err) => {
-      const host = this.client.options.host;
-      const port = this.client.options.port;
+      const host = this.client.options.host ?? 'unknown';
+      const port = this.client.options.port ?? 0;
       console.log(`Redis 连接失败:${host}:${port}`, err);
     });
   }
 
   //设置缓存
-  async set<T>(key: string, value: T, ttl?: number): Promise<boolean> {
+  public async set(key: string, value: unknown, ttl?: number): Promise<boolean> {
     try {
       if (ttl) {
         await this.client.set(key, JSON.stringify(value), 'EX', ttl);
@@ -39,11 +39,11 @@ class RedisCache {
   }
 
   //获取缓存
-  async get<T>(key: string): Promise<T | null> {
+  public async get<TData>(key: string): Promise<TData | null> {
     try {
       const value = await this.client.get(key);
       if (value) {
-        return JSON.parse(value) as T;
+        return JSON.parse(value) as TData;
       }
       return null;
     } catch (error) {
@@ -53,7 +53,7 @@ class RedisCache {
   }
 
   //检查缓存是否存在
-  async exists(key: string): Promise<boolean> {
+  public async exists(key: string): Promise<boolean> {
     try {
       const result = await this.client.exists(key);
       return result === 1; // 返回 true 表示键存在
@@ -64,7 +64,7 @@ class RedisCache {
   }
 
   //更新缓存过期时间
-  async expire(key: string, ttl: number): Promise<boolean> {
+  public async expire(key: string, ttl: number): Promise<boolean> {
     try {
       await this.client.expire(key, ttl);
       return true; // 返回 true 表示更新过期时间成功
@@ -75,7 +75,7 @@ class RedisCache {
   }
 
   //删除缓存
-  async delete(key: string): Promise<boolean> {
+  public async delete(key: string): Promise<boolean> {
     try {
       await this.client.del(key);
       return true; // 返回 true 表示删除成功
@@ -86,7 +86,7 @@ class RedisCache {
   }
 
   //清除所有缓存
-  async clear(): Promise<boolean> {
+  public async clear(): Promise<boolean> {
     try {
       await this.client.flushall();
       return true; // 返回 true 表示清除成功

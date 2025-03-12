@@ -10,7 +10,7 @@ import 'reflect-metadata';
 const env = process.env.NODE_ENV || 'production';
 (dotenv as { config: (options: { path: string }) => void }).config({ path: `.env.${env}` });
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create(AppModule);
     // 配置全局响应拦截器

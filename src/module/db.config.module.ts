@@ -32,7 +32,7 @@ const redisClient = new Redis({
 })
 export class RedisModule {}
 
-const MysqlConfig = {
+const mysqlConfig = {
   host: process.env.MYSQL_HOST || 'localhost',
   port: parseInt(process.env.MYSQL_PORT || '3306'),
   username: process.env.MYSQL_USERNAME || 'root',
@@ -44,11 +44,11 @@ const MysqlConfig = {
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: MysqlConfig.host,
-      port: MysqlConfig.port,
-      username: MysqlConfig.username,
-      password: MysqlConfig.password,
-      database: MysqlConfig.database,
+      host: mysqlConfig.host,
+      port: mysqlConfig.port,
+      username: mysqlConfig.username,
+      password: mysqlConfig.password,
+      database: mysqlConfig.database,
       entities: [path.join(__dirname, '../entity/**/*.entity{.ts,.js}')],
       synchronize: true,
       poolSize: 300,
@@ -59,16 +59,16 @@ const MysqlConfig = {
 export class TypeOrmConfigModule implements OnModuleInit {
   constructor(private readonly dataSource: DataSource) {}
 
-  async onModuleInit() {
+  public async onModuleInit(): Promise<void> {
     try {
       if (!this.dataSource.isInitialized) {
         await this.dataSource.initialize();
-        console.log(`MySQL数据库连接成功:${MysqlConfig.host}:${MysqlConfig.port}`);
+        console.log(`MySQL数据库连接成功:${mysqlConfig.host}:${mysqlConfig.port}`);
       } else {
-        console.log(`MySQL数据库已连接:${MysqlConfig.host}:${MysqlConfig.port}`);
+        console.log(`MySQL数据库已连接:${mysqlConfig.host}:${mysqlConfig.port}`);
       }
     } catch (error) {
-      console.error(`MySQL数据库连接失败:${MysqlConfig.host}:${MysqlConfig.port}`, error);
+      console.error(`MySQL数据库连接失败:${mysqlConfig.host}:${mysqlConfig.port}`, error);
     }
   }
 }

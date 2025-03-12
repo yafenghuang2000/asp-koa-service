@@ -1,6 +1,5 @@
 import { Body, Controller, Post, InternalServerErrorException } from '@nestjs/common';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
-
 import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto } from '@/dto/user.dto';
 import { UserService } from '@/service/user.service';
 
@@ -13,7 +12,7 @@ export class UserController {
     description: '登录请求体',
     type: LoginDto,
   })
-  async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
+  public async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     try {
       const result = await this.useService.login(body);
       return result;
@@ -23,13 +22,12 @@ export class UserController {
   }
 
   @Post('register')
-  // @Public()
   @ApiOperation({ summary: '注册用户' })
   @ApiBody({
     description: '注册用户请求体',
     type: RegisterDto,
   })
-  async register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
+  public async register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
     try {
       const savedUser = await this.useService.register(registerDto);
       return savedUser;

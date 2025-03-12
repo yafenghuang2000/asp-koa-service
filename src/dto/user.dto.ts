@@ -14,7 +14,7 @@ export class LoginDto {
     required: true,
     example: 'admin',
   })
-  username!: string;
+  public username: string;
 
   @IsNotEmpty()
   @IsString()
@@ -24,7 +24,7 @@ export class LoginDto {
     required: true,
     example: '123456admin',
   })
-  password!: string;
+  public password: string;
 }
 
 /**
@@ -33,11 +33,11 @@ export class LoginDto {
 export class LoginResponseDto {
   @ApiProperty({ description: '用户名' })
   @Expose()
-  username: string;
+  public username: string;
 
   @ApiProperty({ description: 'token' })
   @Expose()
-  token: string;
+  public token: string;
 }
 
 /**
@@ -52,7 +52,7 @@ export class RegisterDto {
     required: true,
     example: 'admin',
   })
-  username: string;
+  public username: string;
 
   @IsNotEmpty()
   @IsString()
@@ -62,7 +62,7 @@ export class RegisterDto {
     required: true,
     example: '123456',
   })
-  password: string;
+  public password: string;
 
   @IsOptional()
   @IsString()
@@ -72,7 +72,7 @@ export class RegisterDto {
     required: true,
     example: '15512341234',
   })
-  mobile_number?: string;
+  public mobile_number?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -83,7 +83,7 @@ export class RegisterDto {
     required: true,
     example: '15512341234@qq.com',
   })
-  email: string;
+  public email: string;
 }
 
 /**
@@ -92,5 +92,5 @@ export class RegisterDto {
 export class RegisterResponseDto {
   @ApiProperty({ description: '用户名' })
   @Expose()
-  username: string;
+  public username: string;
 }
