@@ -27,7 +27,6 @@ export class UserService {
 
     // 检查密码是否匹配
     const isMatch = await this.passwordService.comparePassword(loginDto.password, user.password);
-    const tokenPassword = await this.passwordService.hashPassword(loginDto.password);
 
     if (!isMatch) {
       throw new BadRequestException('密码错误');
@@ -43,16 +42,15 @@ export class UserService {
       { expiresIn: '24h', secret: process.env.JWT_SECRET as string },
     );
 
-    const redisKey = `token:${user.username}${tokenPassword}`;
+    const redisKey = `token:${user.username}`;
     const redisSet = await RedisCache.set(redisKey, token, 60 * 60 * 24 * 7);
-    const getRedis = await RedisCache.get(redisKey);
     if (!redisSet) {
       throw new BadRequestException('设置 Redis 缓存失败');
     }
 
     return {
       username: user.username,
-      token: JSON.stringify(getRedis),
+      token: token,
     };
   };
 
