@@ -34,6 +34,10 @@ export class LoginResponseDto {
   @ApiProperty({ description: '用户名' })
   @Expose()
   username: string;
+
+  @ApiProperty({ description: 'token' })
+  @Expose()
+  token: string;
 }
 
 /**
