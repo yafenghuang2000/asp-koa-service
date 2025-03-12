@@ -7,15 +7,6 @@ export default tseslint.config(
   {
     files: ['src/**/*.ts'],
     ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**', '**/*.d.ts'],
-    // languageOptions: {
-    //   parser: tseslint.parser,
-    //   parserOptions: {
-    //     project: './tsconfig.json',
-    //   },
-    //   globals: {
-    //     ...globals.node,
-    //   },
-    // },
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -27,6 +18,7 @@ export default tseslint.config(
       parserOptions: {
         project: true,
         tsconfigRootDir: import.meta.dirname,
+        project: './tsconfig.json',
       },
     },
     linterOptions: {
@@ -38,9 +30,7 @@ export default tseslint.config(
     rules: {
       // 基础规则
       '@typescript-eslint/no-explicit-any': 'error',
-      // '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/explicit-module-boundary-types': 'error',
-      // '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
         {
@@ -75,15 +65,15 @@ export default tseslint.config(
           allowTypedFunctionExpressions: true,
         },
       ],
-      // '@typescript-eslint/explicit-member-accessibility': [
-      //   'error',
-      //   {
-      //     accessibility: 'explicit',
-      //     overrides: {
-      //       constructors: 'no-public',
-      //     },
-      //   },
-      // ],
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            constructors: 'no-public',
+          },
+        },
+      ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/consistent-type-assertions': [
