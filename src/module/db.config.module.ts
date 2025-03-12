@@ -37,7 +37,7 @@ const MysqlConfig = {
   port: parseInt(process.env.MYSQL_PORT || '3306'),
   username: process.env.MYSQL_USERNAME || 'root',
   password: process.env.MYSQL_PASSWORD || '123456789',
-  database: process.env.MYSQL_DATABASE,
+  database: process.env.MYSQL_DATABASE || 'my-test',
 };
 
 @Module({
@@ -49,7 +49,7 @@ const MysqlConfig = {
       username: MysqlConfig.username,
       password: MysqlConfig.password,
       database: MysqlConfig.database,
-      entities: [path.join(__dirname, '../../entity/**/*.entity{.ts,.js}')],
+      entities: [path.join(__dirname, '../entity/**/*.entity{.ts,.js}')],
       synchronize: true,
       poolSize: 300,
     }),
@@ -63,12 +63,12 @@ export class TypeOrmConfigModule implements OnModuleInit {
     try {
       if (!this.dataSource.isInitialized) {
         await this.dataSource.initialize();
-        console.log('MySQL数据库连接成功:localhost:3306');
+        console.log(`MySQL数据库连接成功:${MysqlConfig.host}:${MysqlConfig.port}`);
       } else {
-        console.log('MySQL数据库已连接:localhost:3306');
+        console.log(`MySQL数据库已连接:${MysqlConfig.host}:${MysqlConfig.port}`);
       }
     } catch (error) {
-      console.error('MySQL数据库连接失败:localhost:3306', error);
+      console.error(`MySQL数据库连接失败:${MysqlConfig.host}:${MysqlConfig.port}`, error);
     }
   }
 }
