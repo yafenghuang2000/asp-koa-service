@@ -12,10 +12,13 @@ export class MenuService {
     @InjectRepository(MenuClosureEntity)
     private readonly menuClosureRepository: Repository<MenuClosureEntity>,
   ) {}
+
   /**
    * 新增菜单项
+   * @param createMenuDto 包含菜单项信息的DTO对象
+   * @returns 返回操作成功的消息
+   * @throws ConflictException 如果菜单项已存在，则抛出冲突异常
    */
-
   public async createMenu(createMenuDto: CreateMenuDto): Promise<string> {
     const { id, label, path, parentId } = createMenuDto;
 
@@ -25,11 +28,19 @@ export class MenuService {
       throw new ConflictException('节点已存在，无法重复添加');
     }
 
+    if (!id) {
+      throw new ConflictException('节点id不能为空');
+    }
+
+    if (!label) {
+      throw new ConflictException('节点名称不能为空');
+    }
+
     // 1. 插入菜单项
     const menu = new MenuEntity();
     menu.id = id;
     menu.label = label;
-    menu.path = path || '';
+    menu.path = path;
     await this.menuRepository.save(menu);
 
     // 2. 插入层级关系
@@ -58,6 +69,10 @@ export class MenuService {
     return '菜单项新增成功';
   }
 
+  /**
+   * 查询所有菜单项并构建树形结构
+   * @returns 返回树形结构的菜单项数组
+   */
   public async findAll(): Promise<MenuEntity[]> {
     // 查询所有菜单项
     const menus = await this.menuRepository.find();
@@ -71,6 +86,9 @@ export class MenuService {
 
   /**
    * 将扁平化的菜单数据转换为树形结构
+   * @param menus 菜单项数组
+   * @param closures 层级关系数组
+   * @returns 返回树形结构的菜单项数组
    */
   private buildTree(menus: MenuEntity[], closures: MenuClosureEntity[]): MenuEntity[] {
     const menuMap = new Map<string, MenuEntity>();
