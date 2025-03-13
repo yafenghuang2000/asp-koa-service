@@ -83,11 +83,11 @@ export class UserEntity {
   @Transform(({ value }) => {
     return dayjs(value as DateType).format('YYYY-MM-DD HH:mm:ss');
   })
-  public createdAt: Date;
+  public createdTime: Date;
 
   /**
    * 更新时间，由数据库自动生成
    */
   @UpdateDateColumn()
-  public updatedAt: Date;
+  public updatedTime: Date;
 }
