@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { QueryFailedError } from 'typeorm';
 import { plainToClass, ClassConstructor } from 'class-transformer';
 import { Response } from 'express';
 
@@ -38,6 +39,41 @@ export class ResponseTransformerInterceptor<T>
         };
         return responseData;
       }),
+      // catchError((error: unknown) => {
+      //   let message: string;
+      //   let code: number;
+      //   let statusCode: number = HttpStatus.OK;
+      //   if (error instanceof HttpException) {
+      //     const response = error.getResponse();
+      //     if (typeof response === 'object' && response !== null) {
+      //       const { code: errorCode, message: errorMessage } = response as {
+      //         code?: number;
+      //         message?: string;
+      //       };
+      //       message = errorMessage ?? error.message ?? '服务错误';
+      //       code = errorCode ?? 9000;
+      //     } else {
+      //       message = error.message || '服务错误';
+      //       code = 9000;
+      //     }
+      //     statusCode = error.getStatus(); // 使用原始异常的状态码
+      //   } else {
+      //     message = '服务错误';
+      //     code = 9000;
+      //     statusCode = HttpStatus.INTERNAL_SERVER_ERROR; // 非HttpException异常，设置为500
+      //   }
+      //   return throwError(
+      //     () =>
+      //       new HttpException(
+      //         {
+      //           code,
+      //           message,
+      //           data: null,
+      //         },
+      //         statusCode, // 使用动态状态码
+      //       ),
+      //   );
+      // }),
       catchError((error: unknown) => {
         let message: string;
         let code: number;
@@ -55,11 +91,15 @@ export class ResponseTransformerInterceptor<T>
             message = error.message || '服务错误';
             code = 9000;
           }
-          statusCode = error.getStatus(); // 使用原始异常的状态码
+          statusCode = error.getStatus();
+        } else if (error instanceof QueryFailedError) {
+          message = '数据库操作失败：' + error.message; // 添加数据库错误详情
+          code = 9001; // 自定义数据库错误码
+          statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         } else {
           message = '服务错误';
           code = 9000;
-          statusCode = HttpStatus.INTERNAL_SERVER_ERROR; // 非HttpException异常，设置为500
+          statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return throwError(
           () =>
@@ -69,7 +109,7 @@ export class ResponseTransformerInterceptor<T>
                 message,
                 data: null,
               },
-              statusCode, // 使用动态状态码
+              statusCode,
             ),
         );
       }),

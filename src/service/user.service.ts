@@ -88,7 +88,6 @@ export class UserService {
         password: hashedPassword,
         mobile_number: registerDto.mobile_number,
         email: registerDto.email,
-        createdAt: new Date(),
       });
       const savedUser = await this.userRepository.save(newUser);
       if (!savedUser) {
