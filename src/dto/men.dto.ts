@@ -11,7 +11,7 @@ export class CreateMenuDto {
 
   @IsOptional()
   @IsString()
-  public path?: string;
+  public path: string;
 
   @IsOptional()
   @IsString()

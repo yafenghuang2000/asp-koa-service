@@ -15,6 +15,7 @@ export class MenuService {
   /**
    * 新增菜单项
    */
+
   public async createMenu(createMenuDto: CreateMenuDto): Promise<string> {
     const { id, label, path, parentId } = createMenuDto;
 
@@ -53,6 +54,52 @@ export class MenuService {
     selfClosure.descendant = id;
     selfClosure.depth = 0;
     await this.menuClosureRepository.save(selfClosure);
+
     return '菜单项新增成功';
+  }
+
+  public async findAll(): Promise<MenuEntity[]> {
+    // 查询所有菜单项
+    const menus = await this.menuRepository.find();
+
+    // 查询所有层级关系
+    const closures = await this.menuClosureRepository.find();
+
+    // 构建树形结构
+    return this.buildTree(menus, closures);
+  }
+
+  /**
+   * 将扁平化的菜单数据转换为树形结构
+   */
+  private buildTree(menus: MenuEntity[], closures: MenuClosureEntity[]): MenuEntity[] {
+    const menuMap = new Map<string, MenuEntity>();
+    const roots: MenuEntity[] = [];
+
+    // 将所有菜单项存入 Map
+    menus.forEach((menu) => {
+      menu.children = []; // 初始化子菜单数组
+      menuMap.set(menu.id, menu);
+    });
+
+    // 构建树形结构
+    closures.forEach((closure) => {
+      if (closure.depth === 1) {
+        // 如果深度为 1，表示是父子关系
+        const parent = menuMap.get(closure.ancestor);
+        const child = menuMap.get(closure.descendant);
+        if (parent && child) {
+          parent.children.push(child);
+        }
+      } else if (closure.depth === 0 && closure.ancestor === closure.descendant) {
+        // 如果深度为 0，且 ancestor === descendant，表示是根节点
+        const root = menuMap.get(closure.ancestor);
+        if (root && !roots.includes(root)) {
+          roots.push(root);
+        }
+      }
+    });
+
+    return roots;
   }
 }

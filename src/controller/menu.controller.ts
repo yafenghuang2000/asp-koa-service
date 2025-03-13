@@ -1,6 +1,7 @@
-import { Body, Controller, Post, InternalServerErrorException } from '@nestjs/common';
+import { Body, Get, Controller, Post, InternalServerErrorException } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MenuService } from 'src/service/menu.service';
+import { MenuService } from '@/service/menu.service';
+import { MenuEntity } from '@/entity/men.entity';
 import { CreateMenuDto } from '@/dto/men.dto';
 
 @ApiTags('菜单管理')
@@ -14,13 +15,26 @@ export class MenuController {
     type: CreateMenuDto,
   })
   @ApiResponse({
-    status: 200,
     description: '新增菜单成功',
     type: 'string',
   })
   public async createMenu(@Body() createMenuDto: CreateMenuDto): Promise<string> {
     try {
       return await this.menuService.createMenu(createMenuDto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  @Get('queryAll')
+  @ApiOperation({ summary: '查询所有菜单项' })
+  @ApiResponse({
+    description: '查询所有菜单请求体',
+    type: MenuEntity,
+  })
+  public async findAll(): Promise<MenuEntity[]> {
+    try {
+      return await this.menuService.findAll();
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
