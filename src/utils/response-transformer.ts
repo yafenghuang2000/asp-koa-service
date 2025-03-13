@@ -17,37 +17,26 @@ interface IResponseTransformer<T> {
   data: T;
 }
 
-export function baseTransformResponse<T extends object, V>(cls: ClassConstructor<T>, data: V): T {
-  return plainToClass<T, V>(cls, data, {
-    excludeExtraneousValues: true,
-    exposeUnsetFields: false,
-  });
-}
-
 @Injectable()
 // 实现NestInterceptor接口的intercept方法，用于拦截请求和响应
-export class ResponseTransformerInterceptor implements NestInterceptor<unknown, IResponseTransformer<unknown>> {
-  public intercept(context: ExecutionContext, next: CallHandler): Observable<IResponseTransformer<unknown>> {
+export class ResponseTransformerInterceptor<T>
+  implements NestInterceptor<T, IResponseTransformer<T>>
+{
+  public intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<IResponseTransformer<T>> {
     const ctx = context.switchToHttp();
     const response: Response = ctx.getResponse();
-    // const dtoClass = this.getDtoClassFromContext(context); // 获取DTO类
-    response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
-
     return next.handle().pipe(
-      map((data: unknown) => {
-        // 处理成功响应
-        // console.log(data, 'data', dtoClass);
-
-        const response: IResponseTransformer<unknown> = {
+      map((data: T) => {
+        response.status(HttpStatus.OK); // 设置 HTTP 状态码为 200
+        const responseData: IResponseTransformer<T> = {
           code: 0, // 成功状态码统一为 0
           message: 'success', // 默认成功信息
-          data: data ?? null,
-          // data:
-          //   dtoClass && data
-          //     ? baseTransformResponse(dtoClass as ClassConstructor<object>, data)
-          //     : (data ?? null), // 如果有 DTO 类，则转换数据，否则直接返回数据
+          data: data,
         };
-        return response;
+        return responseData;
       }),
       catchError((error: unknown) => {
         let message: string;
@@ -87,8 +76,10 @@ export class ResponseTransformerInterceptor implements NestInterceptor<unknown, 
     );
   }
 
-  // private getDtoClassFromContext(context: ExecutionContext): ClassConstructor<unknown> | undefined {
-  //   const handler = context.getHandler();
-  //   return Reflect.getMetadata('dtoClass', handler) as ClassConstructor<unknown> | undefined;
-  // }
+  private baseTransformResponse<T extends object, V>(cls: ClassConstructor<T>, data: V): T {
+    return plainToClass<T, V>(cls, data, {
+      excludeExtraneousValues: true,
+      exposeUnsetFields: false,
+    });
+  }
 }

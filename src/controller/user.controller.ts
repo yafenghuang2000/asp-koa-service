@@ -1,4 +1,4 @@
-import { Body, Controller, Post, InternalServerErrorException } from '@nestjs/common';
+import { Body, Controller, InternalServerErrorException, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto } from '@/dto/user.dto';
 import { UserService } from '@/service/user.service';
@@ -14,8 +14,7 @@ export class UserController {
   })
   public async login(@Body() body: LoginDto): Promise<LoginResponseDto> {
     try {
-      const result = await this.useService.login(body);
-      return result;
+      return await this.useService.login(body);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -29,8 +28,7 @@ export class UserController {
   })
   public async register(@Body() registerDto: RegisterDto): Promise<RegisterResponseDto> {
     try {
-      const savedUser = await this.useService.register(registerDto);
-      return savedUser;
+      return await this.useService.register(registerDto);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
