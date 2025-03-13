@@ -22,18 +22,18 @@ export class MenuService {
   public async createMenu(createMenuDto: CreateMenuDto): Promise<string> {
     const { id, label, path, parentId } = createMenuDto;
 
-    // 检查节点是否已存在
-    const existingMenu = await this.menuRepository.findOne({ where: { id } });
-    if (existingMenu) {
-      throw new ConflictException('节点已存在，无法重复添加');
-    }
-
     if (!id) {
       throw new ConflictException('节点id不能为空');
     }
 
     if (!label) {
       throw new ConflictException('节点名称不能为空');
+    }
+
+    // 检查节点是否已存在
+    const existingMenu = await this.menuRepository.findOne({ where: { id } });
+    if (existingMenu) {
+      throw new ConflictException('节点已存在，无法重复添加');
     }
 
     // 1. 插入菜单项
