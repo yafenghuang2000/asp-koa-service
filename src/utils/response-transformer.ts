@@ -42,7 +42,7 @@ export class ResponseTransformerInterceptor<T>
       catchError((error: unknown) => {
         let message: string;
         let code: number;
-        let statusCode: number = HttpStatus.OK;
+        // let statusCode: number = HttpStatus.OK;
         if (error instanceof HttpException) {
           const response = error.getResponse();
           if (typeof response === 'object' && response !== null) {
@@ -56,15 +56,15 @@ export class ResponseTransformerInterceptor<T>
             message = error.message || '服务错误';
             code = 9000;
           }
-          statusCode = error.getStatus();
+          // statusCode = HttpStatus.OK;
         } else if (error instanceof QueryFailedError) {
           message = '数据库操作失败：' + error.message; // 添加数据库错误详情
           code = 9001; // 自定义数据库错误码
-          statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+          // statusCode = HttpStatus.OK;
         } else {
           message = '服务错误';
           code = 9000;
-          statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+          // statusCode = HttpStatus.OK;
         }
         return throwError(
           () =>
@@ -74,7 +74,7 @@ export class ResponseTransformerInterceptor<T>
                 message,
                 data: null,
               },
-              statusCode,
+              HttpStatus.OK,
             ),
         );
       }),

@@ -19,6 +19,7 @@ export class MenuService {
    * @returns 返回操作成功的消息
    * @throws ConflictException 如果菜单项已存在，则抛出冲突异常
    */
+
   public async createMenu(createMenuDto: CreateMenuDto): Promise<string> {
     const { id, label, path, parentId } = createMenuDto;
 
@@ -30,45 +31,83 @@ export class MenuService {
       throw new ConflictException('节点名称不能为空');
     }
 
-    // 检查节点是否已存在
-    const existingMenu = await this.menuRepository.findOne({ where: { id } });
-    if (existingMenu) {
-      throw new ConflictException('节点已存在，无法重复添加');
-    }
-
-    // 1. 插入菜单项
-    const menu = new MenuEntity();
-    menu.id = id;
-    menu.label = label;
-    menu.path = path;
-    await this.menuRepository.save(menu);
-
-    // 2. 插入层级关系
-    if (parentId) {
-      // 如果存在父节点，插入与父节点的关系
-      const parentClosures = await this.menuClosureRepository.find({
-        where: { descendant: parentId },
+    // 使用事务处理
+    return await this.menuRepository.manager.transaction(async (transactionalEntityManager) => {
+      // 检查节点是否已存在
+      const existingMenuId = await transactionalEntityManager.findOne(MenuEntity, {
+        where: { id },
       });
 
-      for (const closure of parentClosures) {
-        const newClosure = new MenuClosureEntity();
-        newClosure.ancestor = closure.ancestor;
-        newClosure.descendant = id;
-        newClosure.depth = closure.depth + 1;
-        await this.menuClosureRepository.save(newClosure);
+      if (existingMenuId) {
+        throw new ConflictException('菜单节点已存在，无法重复添加');
       }
-    }
 
-    // 插入自身的关系
-    const selfClosure = new MenuClosureEntity();
-    selfClosure.ancestor = id;
-    selfClosure.descendant = id;
-    selfClosure.depth = 0;
-    await this.menuClosureRepository.save(selfClosure);
+      const existingMenuLabel = await transactionalEntityManager.findOne(MenuEntity, {
+        where: { label },
+      });
 
-    return '菜单项新增成功';
+      if (existingMenuLabel) {
+        throw new ConflictException('菜单名称已存在，无法重复添加');
+      }
+
+      const existingMenuPath = await transactionalEntityManager.findOne(MenuEntity, {
+        where: { path },
+      });
+
+      if (existingMenuPath) {
+        throw new ConflictException('菜单路径已存在，无法重复添加');
+      }
+
+      // 1. 插入菜单项
+      const menu = new MenuEntity();
+      menu.id = id;
+      menu.label = label;
+      menu.path = path;
+      await transactionalEntityManager.save(menu);
+
+      // 2. 插入层级关系
+      if (parentId) {
+        // 确保父节点存在
+        const parentMenu = await transactionalEntityManager.findOne(MenuEntity, {
+          where: { id: parentId },
+        });
+        if (!parentMenu) {
+          throw new ConflictException('父节点不存在');
+        }
+
+        const parentClosures = await transactionalEntityManager.find(MenuClosureEntity, {
+          where: { descendant: parentId },
+        });
+
+        for (const closure of parentClosures) {
+          const existingClosure = await transactionalEntityManager.findOne(MenuClosureEntity, {
+            where: {
+              ancestor: closure.ancestor,
+              descendant: id,
+              depth: closure.depth + 1,
+            },
+          });
+
+          if (!existingClosure) {
+            const newClosure = new MenuClosureEntity();
+            newClosure.ancestor = closure.ancestor;
+            newClosure.descendant = id;
+            newClosure.depth = closure.depth + 1;
+            await transactionalEntityManager.save(newClosure);
+          }
+        }
+      } else {
+        // 如果没有传入 parentId，则创建一级目录
+        const rootClosure = new MenuClosureEntity();
+        rootClosure.ancestor = id;
+        rootClosure.descendant = id;
+        rootClosure.depth = 0;
+        await transactionalEntityManager.save(rootClosure);
+      }
+
+      return '菜单项新增成功';
+    });
   }
-
   /**
    * 查询所有菜单项并构建树形结构
    * @returns 返回树形结构的菜单项数组
@@ -76,10 +115,8 @@ export class MenuService {
   public async findAll(): Promise<MenuEntity[]> {
     // 查询所有菜单项
     const menus = await this.menuRepository.find();
-
     // 查询所有层级关系
     const closures = await this.menuClosureRepository.find();
-
     // 构建树形结构
     return this.buildTree(menus, closures);
   }
