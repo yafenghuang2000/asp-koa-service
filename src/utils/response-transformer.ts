@@ -39,41 +39,6 @@ export class ResponseTransformerInterceptor<T>
         };
         return responseData;
       }),
-      // catchError((error: unknown) => {
-      //   let message: string;
-      //   let code: number;
-      //   let statusCode: number = HttpStatus.OK;
-      //   if (error instanceof HttpException) {
-      //     const response = error.getResponse();
-      //     if (typeof response === 'object' && response !== null) {
-      //       const { code: errorCode, message: errorMessage } = response as {
-      //         code?: number;
-      //         message?: string;
-      //       };
-      //       message = errorMessage ?? error.message ?? '服务错误';
-      //       code = errorCode ?? 9000;
-      //     } else {
-      //       message = error.message || '服务错误';
-      //       code = 9000;
-      //     }
-      //     statusCode = error.getStatus(); // 使用原始异常的状态码
-      //   } else {
-      //     message = '服务错误';
-      //     code = 9000;
-      //     statusCode = HttpStatus.INTERNAL_SERVER_ERROR; // 非HttpException异常，设置为500
-      //   }
-      //   return throwError(
-      //     () =>
-      //       new HttpException(
-      //         {
-      //           code,
-      //           message,
-      //           data: null,
-      //         },
-      //         statusCode, // 使用动态状态码
-      //       ),
-      //   );
-      // }),
       catchError((error: unknown) => {
         let message: string;
         let code: number;
