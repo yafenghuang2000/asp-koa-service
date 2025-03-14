@@ -33,29 +33,21 @@ export class MenuService {
 
     // 使用事务处理
     return await this.menuRepository.manager.transaction(async (transactionalEntityManager) => {
-      // 检查节点是否已存在
-      const existingMenuId = await transactionalEntityManager.findOne(MenuEntity, {
-        where: { id },
+      // 合并检查菜单节点，菜单名称和菜单的路径是否唯一
+      const existingMenu = await transactionalEntityManager.findOne(MenuEntity, {
+        where: [{ id }, { label }, { path }],
       });
 
-      if (existingMenuId) {
+      if (existingMenu && existingMenu.id === id) {
         throw new ConflictException('菜单节点已存在，无法重复添加');
       }
 
-      const existingMenuLabel = await transactionalEntityManager.findOne(MenuEntity, {
-        where: { label },
-      });
-
-      if (existingMenuLabel) {
-        throw new ConflictException('菜单名称已存在，无法重复添加');
+      if (existingMenu && existingMenu.path === path) {
+        throw new ConflictException('菜单路径已存在，无法重复添加');
       }
 
-      const existingMenuPath = await transactionalEntityManager.findOne(MenuEntity, {
-        where: { path },
-      });
-
-      if (existingMenuPath) {
-        throw new ConflictException('菜单路径已存在，无法重复添加');
+      if (existingMenu && existingMenu.label === label) {
+        throw new ConflictException('菜单名称已存在，无法重复添加');
       }
 
       // 1. 插入菜单项
@@ -97,7 +89,7 @@ export class MenuService {
           }
         }
       } else {
-        // 如果没有传入 parentId，则创建一级目录
+        // 如果没有传入 parentId父节点，则创建一级目录
         const rootClosure = new MenuClosureEntity();
         rootClosure.ancestor = id;
         rootClosure.descendant = id;
